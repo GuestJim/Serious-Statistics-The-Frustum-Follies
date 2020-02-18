@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<benchmark>
+    <results>
+        <result>
+            <name/>
+            <description/>
+            <passIndex>-1</passIndex>
+            <sourceId>3dmark-autosave-20200107223608.3dmark-result</sourceId>
+            <TimeSpyCustomCPUScore>0</TimeSpyCustomCPUScore>
+            <TimeSpyCustom3DMarkScore>0</TimeSpyCustom3DMarkScore>
+            <TimeSpyCustomGraphicsScore>24648</TimeSpyCustomGraphicsScore>
+            <benchmarkRunId>b5c4160c-aee1-4ea0-b58a-f022ded48493</benchmarkRunId>
+        </result>
+        <result>
+            <name/>
+            <description/>
+            <passIndex>0</passIndex>
+            <sourceId>3dmark-autosave-20200107223608.3dmark-result</sourceId>
+            <TimeSpyCustomGraphicsScoreForPass>24648</TimeSpyCustomGraphicsScoreForPass>
+            <TimeSpyCustomCPUScoreForPass>0</TimeSpyCustomCPUScoreForPass>
+            <TimeSpyCustom3DMarkScoreForPass>0</TimeSpyCustom3DMarkScoreForPass>
+            <TimeSpyCustomGraphicsTest1>163.81</TimeSpyCustomGraphicsTest1>
+            <TimeSpyCustomGraphicsTest2>138.96</TimeSpyCustomGraphicsTest2>
+            <benchmarkRunId>b5c4160c-aee1-4ea0-b58a-f022ded48493</benchmarkRunId>
+        </result>
+    </results>
+</benchmark>

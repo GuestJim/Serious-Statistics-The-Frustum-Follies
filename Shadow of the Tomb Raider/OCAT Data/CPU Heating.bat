@@ -1,0 +1,1 @@
+cinebench g_cinebenchCpuXTest=true g_CinebenchMinimumTestDuration=450
