@@ -1,0 +1,15 @@
+These scripts can be used to almost completely automate the creation of 3DMark custom configuration files for testing multiple resolutions and aspect ratios, executing the benchmark, collecting the data, and finally processing. These script do expect to be within the same folder.
+1)	Run "3DMark Build.py"
+1a)		"3DMark Build.py" will ask for Samples per Square Edge. A 16:9 window can be envisioned as a rectangle assembled by squares; 16 horizontally and 9 vertically, so the Samples per Square Edge will determine the resolution. For 1920x1080 it is 120 as 16*120 = 1920 and 9*120 = 1080.
+1b)		"3DMark Build.py" will ask for the aspect ratios you are interested in. It has default values of 16:9, 4:3, 21:9, and 9:16 and just pressing Enter will use these. To use other ratios, type them in with a comma (,) separating entries. Use "x" to separate the values in the aspect ratio, not a colon as the script is only configured to work with "x".
+1c)		Lastly 3DMark will ask the number of loops you want the benchmarks to be run through. The default is 3.
+1d)		"3DMark Build.py" will create a "3DMark Script.py" file based on the inputs you provided and the content of the Reference script and the necessary .3dmdef custom benchmark configuration files in their own folders
+1e)		Copy the folders containing the .3dmef files into the 3DMark program folder within a "SSFF" sub-folder you create. This is where they will be looked for.
+
+2)	Run the new "3DMark Script.py" file. (Do not run "3DMark Script - Reference.py".) This script will use the 3DMark CLI to run the custom benchmark configuration files "3DMark Build.py" created and instructs it to use different names for each output results file.
+2a)		The output results files will be placed into a Results folder created in the same location as the "3DMark Script.py" file. Each group of results will be held in a folder marking its resolution type and the loop number. (An "A" is appended on the end of each resolution in the file names to denote it is that area, as that resolution is not used for every test.)
+
+3)	Run "3DMark Results.py" to scan the files in the Results folder and generate a CSV containing the reported frame rates for both Time Spy tests as well as the resolution type, the loop number, and the ratio for the specific test.
+3a)		"3DMark Results.py" will create a "3DMark Results.r" file that will import the data from the CSV to process it into statistics and graphs
+
+4)	Run the new "3DMark Results.r" file. (Do not run "3DMark Results - Reference.r".)
