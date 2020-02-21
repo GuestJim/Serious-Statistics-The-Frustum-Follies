@@ -174,6 +174,18 @@ dataALL$Ratio	=	factor(dataALL$Ratio,	levels = RATIO,	ordered = TRUE)
 longALL$Type	=	factor(longALL$Type,	levels = TYPE,	ordered = TRUE)
 longALL$Ratio	=	factor(longALL$Ratio,	levels = RATIO,	ordered = TRUE)
 
+longRES	=	pivot_longer(results,
+				cols			=	grep("Test", colnames(results)),
+				names_to		=	"Test",
+				names_prefix	=	"Time Spy GFX ",
+				names_ptypes	=	list(Test = factor(ordered = TRUE)),
+				values_to		=	"Mean"
+			)
+
+longRES$Type	=	factor(longRES$Type,	levels = TYPE,	ordered = TRUE)
+longRES$Ratio	=	factor(longRES$Ratio,	levels = RATIO,	ordered = TRUE)
+levels(longRES$Test)	=	gsub("Test", "Time Spy GFX Test ", levels(longRES$Test))
+#	this is so I can use all of the original results for regressions
 
 library(tableHTML)
 OCCHTML	=	function(DATA, rNAMES	=	FALSE)	{
@@ -188,7 +200,7 @@ writeOCC	=	function(DATA, dataNAME, name, ...)	{
 	write_tableHTML(OCCHTML(DATA, ...), file = paste0(name, " - ", dataNAME,".html"))
 }
 
-htmlALL			=	dataALL
+htmlALL		=	dataALL[with(dataALL, order(dataALL$Type, dataALL$Ratio)), ]
 htmlALL$Area	=	signif(htmlALL$Area, 6)
 htmlALL[, grep("Error", colnames(htmlALL))]	=	signif(htmlALL[, grep("Error", colnames(htmlALL))], 2)
 
@@ -364,7 +376,8 @@ customSave("3DMark Time Spy - ms per Pixels COL")
 #	Pixels per Frame per Millisecond by Ratio and Resolution
 ggplot(data = longALL, aes(x = Pixels, y = (1000/Mean)/Pixels, group = Ratio, color = Ratio, fill = Ratio)) + 
 ggtitle("Serious Statistics: The Frustum Follies", subtitle = "3DMark Time Spy - ms per Pixel per Frame\nLower is better") + labs(caption = "RTX 2060") +
-geom_smooth(data = longALL[-grep("7680x4320", longALL$Type), ], se = FALSE) + 
+# geom_smooth(data = longALL[-grep("7680x4320", longALL$Type), ], se = FALSE) + 
+geom_smooth(data = longRES[-grep("7680x4320", longRES$Type), ], se = FALSE) + 
 geom_point(shape = 21, color = "black") +  
 facet_grid(cols = vars(Test)) + 
 scaleCOLORS + 
@@ -395,7 +408,8 @@ customSave("3DMark Time Spy - ms per Pixels")
 #	Pixels per Frame per Millisecond by Ratio and Resolution with LOG scales and regression
 ggplot(data = longALL, aes(x = Pixels, y = (1000/Mean)/Pixels, group = Ratio, color = Ratio, fill = Ratio)) + 
 ggtitle("Serious Statistics: The Frustum Follies", subtitle = "3DMark Time Spy - ms per Pixel per Frame\nLower is better") + labs(caption = "RTX 2060") +
-geom_smooth(data = longALL[-grep("7680x4320", longALL$Type), ], se = FALSE) + 
+# geom_smooth(data = longALL[-grep("7680x4320", longALL$Type), ], se = FALSE) + 
+geom_smooth(data = longRES[-grep("7680x4320", longRES$Type), ], se = FALSE) + 
 geom_point(shape = 21, color = "black") +  
 facet_grid(cols = vars(Test)) + 
 scaleCOLORS + 
