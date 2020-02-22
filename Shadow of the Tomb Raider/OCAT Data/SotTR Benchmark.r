@@ -23,7 +23,7 @@ SCALES	=	2:10/10
 
 theme_set(theme_grey(base_size = 16))
 DPI			=	120
-ggdevice	=	"png"
+ggdevice	=	"both"
 gWIDTH		=	21
 gHEIGH		=	9
 
@@ -176,10 +176,10 @@ GROUPS	=	list(
 		Pixels	=	results$Pixels
 		)
 DATAS	=	list(
-		CPU_Game	=	results$CPU_Game,
+		FPS			=	results$FPS,
 		CPU_Render	=	results$CPU_Render,
-		GPU			=	results$GPU,
-		FPS			=	results$FPS
+		CPU_Game	=	results$CPU_Game,
+		GPU			=	results$GPU
 		)
 
 dataMEAN	=	aggregate(DATAS, GROUPS, roundMEAN)
@@ -190,7 +190,7 @@ dataGEO		=	aggregate(DATAS, list(Ratio = results$Ratio), meanGEO)
 
 # dataMEAN	=	dataMEAN[rev(order(dataMEAN$Scale)), ]
 
-dataALL		=	merge(dataMEAN, dataERROR, by = c("Ratio", "Type", "Scale", "Area", "Pixels", "API"), suffixes = c("_Mean", "_Error"), sort = FALSE)
+dataALL		=	merge(dataMEAN, dataERROR, by = c("Type", "Ratio", "Scale", "Area", "Pixels", "API"), suffixes = c("_Mean", "_Error"), sort = FALSE)
 
 dataALL$Ratio	=	factor(dataALL$Ratio,	levels = RATIO,	ordered = TRUE)
 dataALL$Type	=	factor(dataALL$Type,	levels = TYPE,	ordered = TRUE)
@@ -211,7 +211,7 @@ longERROR	=	pivot_longer(dataERROR,
 )
 
 
-longALL	=	merge(longMEAN, longERROR, by = c("Ratio", "Type", "Scale", "Area", "Pixels", "API", "Measurement"))
+longALL	=	merge(longMEAN, longERROR, by = c("Type", "Ratio", "Scale", "Area", "Pixels", "API", "Measurement"))
 
 
 levels(longALL$Measurement)	=	rem_(longALL$Measurement)
@@ -234,8 +234,10 @@ writeOCC	=	function(DATA, dataNAME, name, ...)	{
 	write_tableHTML(OCCHTML(DATA, ...), file = paste0(name, " - ", dataNAME,".html"))
 }
 
-htmlALL	=	dataALL
+htmlALL		=	dataALL[with(dataALL, order(dataALL$API, dataALL$Type)), ]
+htmlALL$Area	=	signif(htmlALL$Area, 4)
 colnames(htmlALL)	=	rem_(colnames(htmlALL))
+
 writeOCC(htmlALL,	"dataALL",	"SSFF - SotTR")
 # writeOCC(AREAS,		"Areas",	"SSFF - SotTR",	rNAMES = TRUE)
 
@@ -402,7 +404,7 @@ scale_x_continuous(
 	trans			=	"reverse"
 )
 
-customSave("SotTR - CPU_Render by Scale", width = 16)
+customSave("SotTR - CPU Render by Scale", width = 16)
 
 
 #	CPU_Render by Ratio and Resolution
@@ -437,7 +439,7 @@ scale_x_discrete(
 	expand			=	c(0.02, 0)
 )
 
-customSave("SotTR - CPU_Render by Res", width = 16)
+customSave("SotTR - CPU Render by Res", width = 16)
 
 
 #	All faceted by Resolution
@@ -579,7 +581,7 @@ scale_x_log10(
 	)
 )
 
-customSave("SotTR - CPU_Render Time by Pixels")
+customSave("SotTR - CPU Render Time by Pixels")
 
 
 #	Frame time by Area, Resolution groups
@@ -652,7 +654,7 @@ scale_x_log10(
 	)
 )
 
-customSave("SotTR - CPU_Render Time per Pixel by Pixels")
+customSave("SotTR - CPU Render Time per Pixel by Pixels")
 
 
 #	FPS time by Ratio
@@ -712,7 +714,7 @@ scale_x_discrete(
 	name		=	"Aspect Ratio"
 )
 
-customSave("SotTR - CPU_Render Time by Ratio")
+customSave("SotTR - CPU Render Time by Ratio")
 
 
 #	try a graph with x = Area and y = (1000/Mean)/Pixels
@@ -779,4 +781,4 @@ scale_x_continuous(
 	# trans	=	"log10"
 )
 
-customSave("SotTR - CPU_Render Time per Pixel by Area")
+customSave("SotTR - CPU Render Time per Pixel by Area")
