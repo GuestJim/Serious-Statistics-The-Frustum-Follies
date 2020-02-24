@@ -1,0 +1,116 @@
+\section{Shadow of the Tomb Raider}
+
+The first game I decided I wanted to collect data in was \href{http://www.overclockersclub.com/reviews/tomb_raider_shadow/}{\textit{Shadow of the Tomb Raider}}, which is a still reasonably modern title that I also did a \href{http://www.overclockersclub.com/reviews/tomb_raider_shadow_performance/}{performance analysis} of, and a game I still have installed on the test system.
+Since I have already established paths to run to collect data in, I decided that is how I would collect the data, but before long decided to change my method.
+While trying to do the runs and collect data using OCAT, the game crashed on me multiple times, which is rather annoying when the recordings runs are five minutes long.
+I believe updating the drivers may have addressed the crash, but having already collected the 3DMark data with the driver stated before, I wanted to keep to it.
+
+My solution was to instead use the game's benchmark, which offers a number of advantages for this article compared to the manual runs.
+For one, it is completely repeatable and it also provides data for the CPU I would not be able to get from OCAT.
+Specifically it shares CPU Game and CPU Render frame rates, as well as GPU frame rate and the overall average.
+My guess is CPU Game refers to work like NPC AI while CPU Render would include the draw calls.
+Another advantage to using the benchmark is if the game crashes during it, I could just restart and get it going again with a button press, instead of needing to stop the recording, reset myself, and start a fresh recording.
+Of course being an in-game benchmark, it might not be the best representation of the game's performance, but for my purpose here, it should be valid.
+
+Another couple tweaks I made to my method came from something I observed while initially collecting the data.
+One was the CPU performance started declining from the first run fairly quickly before leveling off.
+I attributed this to the CPU warming up and thus not boosting as high for the later runs.
+My solution was to create a script to run Cinebench R20 for seven and a half minutes that I would run before starting the game.
+The other thing I noticed was performance dropping over the longer term, but I doubted this was the result of any component warming.
+Initially I was not thinking too much of it, but then the game crashed and immediately the results improved, more than would happen if it was heat related.
+My guess is there is some kind of performance leak and a long session collecting this data ran into it.
+My solution was to restart the game each time I changed the resolution and run the Cinebench R20 script before starting on the next resolution.
+I ran the benchmark three times for each configuration, but would repeat it if one value seemed off so the triples would be near each other.
+(The first run after starting the game often was a little better, but after the next two it stabilized so I would do a fourth run and keep that data.)
+
+The configuration I used was to have the game at its highest options for each setting except Anti-Aliasing and Ray Traced Shadow Quality.
+For Anti-Aliasing I used SMAA T2x and I had ray tracing disabled.
+I collected data with the game using both DirectX 11 and DirectX 12, so the newer API's ability to better handle draw calls may appear in the data.
+
+Since launch the game has received a Resolution Scale slider that could be better presented in-game and I also stepped down it so I have more data than just at the common resolutions I used.
+The reason I say it could be better presented in-game is because it does not state in the game what the resolution scale is.
+In the launcher where you can tweak the graphics settings, however, it shows the scale goes from 20\% to 100\% with a step of 5\%.
+I decided to use a step of 10\%, starting from 100\% and working my way down to 20\%.
+(By the way, the game commits what I would consider a cardinal sin of resolution scaling by applying the scale to the UI as well, with even the Main Menu affected.
+At times I needed to turn the scale back up so I could read the results from the benchmark.)
+
+The resolutions I decided to collect data at were 1920x1080, 1680x1050, 1600x900, 1280x1024, and 1280x720.
+Between these I have 16:9, 16:10, and 5:4 covered, but the game does also offer 4:3 resolutions, in name at least, and some other resolutions with less standard ratios.
+I did not feel the less standard ratios were necessary and did not collect 4:3 data because they are not actually 4:3.
+Like with 3DMark, I grabbed screenshots and aligned them, to determine how the frustum was impacted by the aspect ratio.
+
+%COMPOSITE
+\image{{SotTR Composite}}
+
+%COMPOSITE_COLORED
+\image{{SotTR Composite - Colored}}
+
+Like 3DMark, the game grows the frustum, but for 4:3 it is actually using a 5:4 frustum and then shrinking it down to fit into the different frame size, making it inappropriate to use.
+
+%Frustum_Comparisons
+\image{{SotTR Frustum Comparisons}}
+
+With that covered, we can get into the results, and like before, I am going to go through the graphs and then share the results in a large table at the end.
+
+%All_by_Scale
+\image{{SSFF - SotTR - All by Scale}}
+
+That is from all of the data I collected, and not all of it is relevant for this article, but I felt like sharing it anyway.
+It does show the impact changing the resolution scale has on performance across multiple metrics, but you can also clearly see some differences between DirectX 11 and DirectX 12.
+DirectX 11 performance is less impacted by the resolution scale reducing, even for the GPU performance that would seemingly be a theoretical value based on what would happen if there were no other bottlenecks.
+Arguably it appears that if you are using DirectX 11 for this game, there is little point to reducing the resolution scale as the performance does not appear to be impacted much by it for any metric.
+
+DirectX 12, however, does show changes, most obviously with the FPS performance, but we also see the GPU and CPU Render performance improve.
+I am not sure why this is, unless it is a result of the CPU not having to wait as long on the GPU to finish its work.
+
+As it is just the FPS and CPU Render data that will be of the most interest to this article, here are graphs for just them.
+
+%FPS_BY_SCALE
+\image{{SSFF - SotTR - FPS by Scale}}
+
+%CPU_RENDER_BY_SCALE
+\image{{SSFF - SotTR - CPU Render by Scale}}
+
+It is a bit disappointing that one cannot arbitrarily set the resolution or field of view for most games, which is part of the reason I decided to collect data at the different resolution scales; so I had more information for each aspect ratio.
+
+%CPU_RENDER_TIME_BY_RATIO
+\image{{SSFF - SotTR - CPU Render Time by Ratio}}
+
+This graph is meant to show the CPU Render performance differences between the aspect ratios, which is similar to one for 3DMark, but because I had multiple 16:9 resolutions I am using points instead of columns.
+Anyway, we can see there were some differences between the ratios, most noticeably at the higher resolutions scales.
+It is especially true for DirectX 11, but DirectX 12 does show it as well.
+You can tell this just by looking at the Y-scales as the limits of the DX12 scale is far lower than DX11 limits.
+
+Here is the same graph for the FPS results, which basically shows the same thing so I am not going to say more about it
+
+%FPS_TIME_BY_RATIO
+\image{{SSFF - SotTR - FPS Time by Ratio}}
+
+The following sequence of graphs is with the results normalized by dividing by the number of pixels.
+The first pair use the same X-scales as the two graphs we just saw, but I also threw in some horizontal lines to make it easier to see the changes across the resolution scale facets, or lack of changes.
+
+%FPS_TIME_PER_PIXEL_BY_AREA
+\image{{SSFF - SotTR - FPS Time per Pixel by Area}}
+
+%CPU_RENDER_TIME_PER_PIXEL_BY_AREA
+\image{{SSFF - SotTR - CPU Render Time per Pixel by Area}}
+
+Like was seen with the 3DMark results, the higher resolution show better performance here, likely because the sheer number of pixels and the GPU's ability to produce them.
+We also see the performance get worse as the resolution scale decreases.
+Unfortunately we also do not see the normalization causing the 16:9 ratios overlay each other much, which is what my hypothesis would predict.
+
+These next graphs actually show the same data as the above two, but without the faceting for resolution scales.
+
+%FPS_TIME_PER_PIXEL_BY_PIXELS
+\image{{SSFF - SotTR - FPS Time per Pixel by Pixels}}
+
+%CPU_RENDER_TIME_PER_PIXEL_BY_PIXELS
+\image{{SSFF - SotTR - CPU Render Time per Pixel by Pixels}}
+
+Unfortunately it looks like the \textit{Shadow of the Tomb Raider} data does not support my hypothesis.
+Realistically though, I do not find this surprising as it makes sense to me that some games would be better and some worse examples.
+Plus, being a modern game it might be taking such advantage of the hardware for advanced effects that any impact by aspect ratio might not be visible.
+Luckily that is not so much a concern for the next game.
+
+\clearpage
+% \input{"Sections - Article/04.1 Shadow of the Tomb Raider - dataALL.ltx"}

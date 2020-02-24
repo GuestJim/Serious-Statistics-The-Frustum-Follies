@@ -1,0 +1,51 @@
+\documentclass[11pt, letterpaper]{article}
+
+\title{Serious Statistics: The Frustum Follies}
+\author{Jim Pitchford}
+
+\input{"Preamble.tex"}
+
+\usepackage{multicol}
+
+\usepackage[backend=biber]{biblatex}
+\addbibresource{Sources.bib}
+
+\begin{document}
+\graphicspath{{Media/}}
+
+%\pdfbookmark{\contentsname}{toc}	%adds a bookmark of the TOC to the file but not the list itself
+%\tableofcontents
+
+% \input{"Sections - Article/00 Abstract.ltx"}
+
+\input{"Sections - Article/01 Introduction.ltx"}
+
+\cleardoublepage
+\input{"Sections - Article/02 Hypothesis and Process.ltx"}
+
+\cleardoublepage
+\graphicspath{{Media/3DMark/}}
+\input{"Sections - Article/03 3DMark Time Spy.ltx"}
+
+\cleardoublepage
+\graphicspath{{Media/Shadow of the Tomb Raider/}}
+\input{"Sections - Article/04 Shadow of the Tomb Raider.ltx"}
+
+\cleardoublepage
+\graphicspath{{Media/Serious Sam/}}
+\input{"Sections - Article/05 Serious Sam Fusion 2017.ltx"}
+
+\cleardoublepage
+\input{"Sections - Article/06 Conclusion.ltx"}
+
+
+% \cleardoublepage
+\vspace{\fill}
+	\begin{center}
+	\vfill
+		{\changeurlcolor{black}\qrcode[height=2cm, level=Quality]{https://github.com/GuestJim/Serious-Statistics-The-Frustum-Follies/releases}}
+		
+		\vspace{0.25cm}
+		\href{https://github.com/GuestJim/Serious-Statistics-The-Frustum-Follies/releases}{Article}
+	\end{center}
+\end{document}

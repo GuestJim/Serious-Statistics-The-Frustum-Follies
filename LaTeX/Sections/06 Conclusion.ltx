@@ -1,0 +1,37 @@
+\section{Conclusion}
+
+With the results having been gone through, it is time to address the question of if my hypothesis that \textbf{performance is a function of both sampling frequency/resolution and aspect ratio} should be rejected for the counter hypothesis, \textbf{performance is a function of sampling frequency/resolution}, or not.
+Perhaps unsurprisingly, I think nuance wins here, with the dependence on aspect ratio being situational.
+While performance differences could be observed for both 3DMark and \textit{Serious Sam Fusion 2017}, \textit{Shadow of the Tomb Raider} demonstrated a different trend.
+
+When using DirectX 11 for \textit{Shadow of the Tomb Raider}, the mean frame time did appear to separate based on the aspect ratio, but we also saw in this performance being barely impacted by resolution scale.
+ DirectX 12 brought the lines closer together, suggesting a much smaller impact by the frustum shape on performance for this API.
+When normalizing the results by dividing the frame time by the number of pixels, the graphs became effectively linear (but on logarithmic scales) and all of the lines were on top of each other, again suggesting no dependence on frustum shape for performance.
+
+The 3DMark data, however, did show the frustum shape having an influence on the performance, but also the impact CPU and GPU performance has on the situation.
+Before the GPU can start drawing a frame, it needs to be told what is in it and that is work the CPU does and is dependent on the frustum shape.
+When there is a larger frustum the CPU will have more work to do and so in CPU-bound situations we would expect the performance to decrease, which we saw at the lower resolutions when the GPU would indeed have less to do.
+At the higher resolutions, however, we saw something unexpected happen and that was performance actually improve at some aspect ratios, despite there being more CPU work to do.
+The reason for this is likely related to the sampling of the scene and the complex assets in it.
+
+Being a benchmark with a fixed path, Time Spy does not have complex art assets spread out evenly through the virtual world like a video game.
+It concentrates them just along the path the camera takes, and it was also designed with a 16:9 frustum in mind.
+When the frustum shape changes, then more complex objects can be included, making the rendering harder, but it can also mean the number of samples on a complex asset can be reduced.
+Think of it this way, at 16:9 there might be 1000 samples to cover the most complex and hard to render object in the scene, but if the ratio is changed to 21:9 or something silly like 9:16, then it might only be 750 samples covering that object.
+This means the work to render that object will be reduced, and unless the remaining samples are complex enough to make up for this decrease, the performance will get better.
+This effect is more likely to happen when the GPU is already approaching its performance limits, meaning we have a GPU-bound situation.
+We also saw in the 3DMark data that the direction the frustum changes shape, being taller instead of being wider, can significantly impact performance, which definitely supports my hypothesis.
+
+Coming to \textit{Serious Sam Fusion 2017}, we saw results that supported my hypothesis, but again it appeared to be dependent on if it were a CPU or GPU bound situation.
+The best example of this support came from what could be described an imperfect result because of the limitations on the field of view angle.
+For both 4:3 and 5:4 resolutions, creating an effective 21:9 frame would require pushing the FOV past 120°, the game's upper limit, so I decided to collect data for both at that limit instead of dropping the test.
+What we then saw for 1280x960 and 1280x1024 was the higher-resolution 1280x1024 outperform 1280x960.
+There was more GPU work to do at 1280x1024, but because the area of its frustum would be smaller than that of 1280x960, it performed better.
+That definitely appears to be strong evidence for my hypothesis, but then the expectation that smaller frame areas will always improve performance was proved wrong for many of the resolutions as 4:3 performed worse than 16:10 and/or 16:9.
+We did see 5:4, the smallest frame area perform better than the other aspect ratios for some of the tests though, so the expectation was neither always true nor always false.
+
+In the end, it looks like we cannot reject my hypothesis, that performance is dependent on both sampling rate (resolution) and aspect ratio, but its impact can be hidden by other factors.
+Reaching the limits of the GPU is one of these factors, as in that circumstance the CPU performance, which will more likely be impacted by the change to the frustum shape, is not as apparent.
+Additionally the answer can depend on the specific title being tested, further complicating the subject.
+Still, I do not think this was a particularly foolish exercise because, if nothing else, the results confirm there is something to the hypothesis and one cannot simply assume more pixels means lower performance.
+There are more variables than that involved with determining performance and aspect ratio is one of them.

@@ -1,0 +1,188 @@
+\section{3DMark Time Spy}
+
+3DMark is a popular benchmark for testing CPU and GPU performance, and thankfully as a member of the press I have access to 3DMark Professional Edition with its special features, including the ability to create custom benchmark settings and to run it from the command line.
+While there is a drop down menu for testing different resolutions, this list is limited and for what I want to do; manually setting resolutions is necessary.
+Really though it is the command line capability I am most thankful for as it allowed me to script the runs through the many tests I did.
+None of the graphics tests in 3DMark are particularly long, and the output I get is an average FPS, so I wanted to repeat the tests to build confidence in the data.
+I set my scripts to loop through my tests 15 times at 12 different resolutions and six aspect ratios (1080 tests, total).
+Each test produced its own results file that I then had another script read and build into a CSV for easy processing.
+
+The six aspect ratios I chose were 16:9, 4:3.
+5:4, 16:10, 21:9, and 9:16.
+I chose these because they are common on lists of resolutions, save 9:16 which, being a simple rotation, should be an ideal test of my hypothesis.
+
+To make the data between the ratios comparable, I did the math to arrive at resolutions that will produce approximately the same total pixels.
+For example, 1920x1080 has a pixel count of 2,073,600 pixels; 1664x1246 has a 4:3 ratio and produces 2,073,344 pixels; 1610x1288, a 5:4, produces 2,073,680; 1822x1138, a 16:10 ratio, has 2,073,436 pixels; 2200x942, a 21:9 ratio, produces 2,072,400 pixels; and naturally 1080x1920 has the same 2,073,600 pixels.
+It is not possible to get exactly the same number of pixels as that would require fractional dimensions and not only will 3DMark only accept integer values (just as everything else would), but it also requires the dimensions be even integers.
+I have scripted a process to generate these resolutions based on desired aspect ratio and sampling frequency, but also manually tuned those results as that process sometimes did not produce the nearest result.
+It is still very close though, if you choose to look at the script that generates the list.
+
+The specific tests I used were the two Time Spy graphics tests.
+The CPU test cannot have its graphics settings changed and Fire Strike, another very demanding benchmark will not alter its frustum.
+If you try a custom resolution it will add black padding as needed to meet the desired resolution (letter or pillar-boxing).
+
+Of course it is important to understand how the frustum will be changed by the different aspect ratios, so to determine this I recorded a single run of the tests via a capture card to grab screenshots and align them.
+
+%COMPOSTITE_SCREENSHOTS
+\image{{Test 1 Composite}}
+
+\image{{Test 2 Composite}}
+
+I did need to rescale the images to align, but what I found is the frustum always grew from the base 16:9.
+This actually made the scaling pretty easy,as I just needed to set the appropriate dimension to either 1920 or 1080.
+For example, the 4:3 image needed to be 1920 wide to overlay properly and the 21:9 be 1080 tall to overlay properly.
+Here is a graphic to clearly show how the ratios stack up.
+
+%FRUSTUM_COMPARISONS
+\image{{3DMark Frustum Comparisons}}
+
+To help see the differences in the composite images, here are versions with each ratio colored to match the graphic, except 16:9.
+
+%COMPOSTITE_COLORED
+\image{{Test 1 Composite - Colored}}
+
+\image{{Test 2 Composite - Colored}}
+
+I think that covers enough of the process, so time to get to what I actually did.
+First, here are the tables of resolutions I used.
+The 736x414 resolution is odd but I selected it because it is approximately the area, in 16:9, of 640x480, a very common 4:3 resolution.
+
+\noindent
+\input{"Sections - Article/03.1 3DMark Time Spy - Dimensions.ltx"}
+
+And, for those interested in seeing the differences between the areas for these resolutions, here is that table.
+
+\noindent
+\input{"Sections - Article/03.1 3DMark Time Spy - Areas.ltx"}
+
+Instead of providing the table of the results with the graphs, I am going to leave that for later.
+It is a fairly big table and I personally feel the graphs are a better way to ingest the information here by making comparisons easier.
+
+This first graph shows the mean frame rate from the fifteen runs for each pixel area group and aspect ratio.
+You may notice small magenta lines on the graphs, which are there to represent the standard error of the means, and as you can see from how small their ranges are, this data was very consistent.
+
+%FPS_BY_RES
+\image{{SSFF - 3DMark Time Spy - FPS by Res}}
+
+There are a couple patterns that can be identified in the Time Spy GFX 1 plot I want to focus on.
+The first we see at the lower resolutions with the significant differences in performance between the aspect ratios.
+This is likely the result of differences in draw calls between the aspect ratios, as these are done by the CPU, and at low resolutions you are more likely to be CPU-bound.
+When the frustum is larger there are more draw calls and thus more work for the CPU to do, so we see the performance fall.
+This is more apparent in the GFX Test 1 plot than GFX Test 2, but is present in both.
+
+The second pattern is present in both plots, but again more apparent in the Test 1 results.
+This pattern is actually an increase in performance at the higher resolutions, like 1920x1080, 2560x1440, 3200x1800, and even 3840x2160, for the 21:9 and 9:16 ratios.
+A likely and reasonable explanation for this relates to the development of the Time Spy benchmark.
+Like a game, only the assets within the frustum will be rendered, but unlike a game, the placement of the camera frustum is largely known to the artists building the scene.
+While it definitely appears there are assets throughout the virtual world of the tests, the concentration of complex objects is contained within the default 16:9 frustum.
+By growing the frustum we are increasing the area needing to be rendered, yes, but also decreasing the sampling for what that default frustum covers; the complex objects.
+That would make the GPU work easier, and as we are GPU-bound at this point, we see the benefits.
+
+For contrast, a game might not produce a similar pattern as art assets will be placed in all directions, just as the camera can be turned in all directions.
+The effect can still happen, but could be less significant because of this aspect of art placement
+
+Focusing on the Time Spy GFX 2 plot, we see the 21:9 performance specifically being much lower at the lower resolutions, but it then picks up at the higher resolutions.
+This could be the result of what I just described, as 21:9 is the only ratio I am testing that is wider than 16:9.
+If the artists placed more assets on the left and right of the default frustum, this would catch them and thus increase the draw calls and CPU work.
+As several of the camera movements are pans to the left and right, a wider frustum will result in complex objects remaining in frame longer.
+
+As the situation becomes more GPU-bound, the performance levels out and then the sample/pixel density comes into play again, allowing 21:9 to be slightly ahead.
+That 9:16 is not affected like this in the second plot but was in the first could simply be that there were more assets placed above and below the default frustum in the first test than in the second.
+
+By the way, in case anyone is wondering why I am using FPS instead of frame time in milliseconds, it is because 3DMark reports in FPS, making it easier to continue using this unit for this graph.
+It is an easy conversion to make though, so I did that for these next three graphs that are exactly frame time graphs, as well as those that follow that are a bit different.
+
+%ms_by_Pixels
+\image{{SSFF - 3DMark Time Spy - ms by Pixels}}
+
+This graph I initially did not want to include, but after noticing something and figuring out how to add it to the graph, I decided to use it anyway.
+The cause for concern over including the graph is its use of logarithmic scales, which are nonlinear and not necessarily something many are familiar with.
+However, as I continued to work with the data for this article, I found logarithmic scales seemed more appropriate for several graphs by making patterns more visible.
+Quickly though, I want to cover what a logarithmic scale is.
+
+Logarithmic scales are especially appropriate to use when there is exponential growth, as the scale will make the growth appear linear.
+The X-axis here is a perfect example because area does follow exponential growth and the breaks on the axis are nicely spaced now.
+If I used a standard linear scale, the breaks and labels would all be bunched up at the lower range, making it harder to read.
+This also means the distance between the points would collapse at the lower resolutions and make some patterns harder to see.
+
+I am also using a log scale for the Y-axis because even though you would not expect frame time to be exponential, the linear distance between the 7680x4320 data and the rest is so great the other data would be almost hidden along the bottom of the graph.
+Now the spacing is more reasonable but I also noticed a couple patterns with this, which I have marked on the plots.
+
+I have mentioned a few times the idea of CPU-bound and GPU-bound scenarios and I think these scales are actually allowing me to identify them.
+As the groups of regression lines show, especially for the Time Spy GFX 1 plot, the performance for the lower resolutions appears nearly flat as resolution increases, but then it picks up at 1280x720 and above.
+I believe the flat lines are indicative of a CPU-bound scenario, because the work the CPU is doing here should be largely independent of the resolution.
+The work a GPU does will be dependent on the resolution, so we see lines with a significant slope to them at the higher resolutions.
+
+Though I have not altered where the regression lines break between the two plots here, I do suspect the transition between CPU and GPU bound are slightly different for the two tests.
+The reason the 7680x4320 resolution is not included is that the performance is clearly an outlier.
+
+This next graph again shows frame time but with a different X-axis.
+I did the math to determine what the actual area difference is between 16:9 and the other ratios.
+As 16:9 served as the base size, every other ratio is a larger area, and making the graph a little hard to read is the fact that 21:9 and 4:3 are actually very near each other in area.
+Of course these are larger by expanding in different directions, but it is still the case they are nearly the same area, relative to 16:9.
+Because of how much the frustum had to expand to achieve 9:16, it is all the way off on its own.
+For comparison, 5:4 has the second largest area at 1.422 that of 16:9 while 9:16 is 3.160 times the size.
+
+%MS_BY_AREA
+\image{{SSFF - 3DMark Time Spy - ms by Area}}
+
+Like the previous graph I am using a logarithmic scale for the Y-scale because it is the only way for all of the results to be visible without being collapsed on top of each other.
+
+In any case, this graph allows us to see how the performance did actually change based on the area of the frustum.
+The most extreme example is with the 7680x4320 resolution, but as other graphs show, this resolution is clearly an outlier.
+It is possible to see differences with other resolutions though, especially for the lower resolutions where the performance is more CPU-bound and so the draw calls impact the performance more.
+
+Because the Y-scale might be making it hard to spot some differences, I decided to do a trick with facets.
+Normally I have the scales shared across facets, but I can disable that so the plots can zoom in on the data, making the details easier to spot.
+Unfortunately this also causes some of the breaks to disappear on the Y-axis, but that is not the case on the previous graph
+
+%MS_BY_AREA_Zoom
+\image{{SSFF - 3DMark Time Spy - ms by Area Zoom}}
+
+By allowing this free zooming to fit the data for each ratio, we can definitely see differences between them at most resolutions.
+Something very interesting to see is how the performance does not follow a linear trend as the area increases for the higher resolutions, even if we ignore 21:9 so the area increase is always along the vertical.
+We do see this trend at the lower resolutions, which would follow from the CPU's work increasing with the frustum size.
+Once it becomes more GPU-bound though, this ceases to be the case and some weird things start happening, perhaps because of the sampling rate decreasing over complex objects I mentioned earlier.
+
+%MS_PER_PIXELS_COL
+\image{{SSFF - 3DMark Time Spy - ms per Pixels COL}}
+
+This graph is a bit different from the others because I did something to try to normalize the data; I divided the frame time by the pixel counts.
+This means the units are milliseconds per pixel per frame, so for an average frame this is how much time it takes to draw a pixel.
+Pixels are not drawn individually, but it is the best way I could think of to normalize the data across the resolutions.
+
+As we can see, the results here reduce as the resolution increases, but also appears to flatten out starting around 2560x1440.
+(I am not considering the 7680x4320 results because they are an outlier, but there is something interesting happening there that I do want to look at.It may seem counterintuitive that the time to draw a pixel is actually reducing as resolution increases, but I can think of a reasonable explanation for this.
+A GPU will only be able to shade pixels so quickly, so there would be a theoretical maximum it can shade in a given amount of time.
+When you are below this maximum, then you are producing fewer pixels-per-second because the GPU cannot go any faster and its performance is not being optimally used.
+This means the time value in the numerator will not change much, but the pixel count in the denominator can increase substantially, bringing the value down.
+I would speculate the columns flattening out would be the result of the GPU approaching its theoretical maximum, making the performance GPU-bound.
+It is worth noting, this maximum will vary between applications because of different effects and such the GPU needs to do.
+
+Because the areas are approximately the same with the same resolution group, this graph is not really telling us much more than the FPS graph did earlier, except this is more akin to a frame time graph.
+It does help confirm how 7680x4320 is an outlier though, with the time it takes to draw a pixel leaping up like it were CPU-bound again.
+I doubt it is directly CPU-bound, though the CPU may play a part in it.
+My guess is the VRAM is full so system RAM is being used, producing a bottleneck external to the GPU.
+The CPU would only be involved as far as directing the traffic between the two components.
+It is interesting to see the 21:9 data being better than the others for that resolution though, and I am not sure why.
+That ratio definitely did perform better, being closer to 2 FPS than 1 FPS, but why it specifically did better I have no guess for.
+Regardless though, the 7680x4320 resolution is clearly an outlier.
+
+To get another look at this data, and see if there are any exponential patterns to it, I have also graphed it with a logarithmic scale and changed to using points instead of columns.
+
+%MS_PER_PIXELS_LOG
+\image{{SSFF - 3DMark Time Spy - ms per Pixels log}}
+
+The 7680x4320 data is not used for the regressions, but we do see something interesting happening near it, at 6400x3600.
+The dots and the curves are clearly separated there, especially for GFX Test 1, though the separation starts earlier, and it looks like the results are starting to curve up again, towards longer times.
+It makes me wonder what would happen if the resolution could continue to increase resolution without the VRAM issue I speculate is occurring at 7680x4320.
+Without the additional data it is only speculation, but what we do see in this data are the trends differing between the aspect ratios, even at the high resolutions where we should be GPU-bound.
+We can see the 21:9 ratio is actually turning up more than the others, so its performance was starting to decrease faster than the others, even though we see 16:9 performing worse at the data.
+
+Based on the results for 3DMark, it does seem my hypothesis is holding up, but this is not the most appropriate test.
+As mentioned earlier, 3DMark tests have their complex art assets placed to be captured by the default 16:9 ratio, so by growing the frustum, the performance behavior becomes less predictable and less analogous to what we can expect in a game.
+However, with such precise control over resolution, the ability to exactly reproduce the test, and ease of repeating the tests I do feel this was still worth investigating, and is a good starting place.
+It is a good test and good experiment, but not necessarily representative of games, at least for how I am specifically using it.
+
+\clearpage
+% \input{"Sections - Article/03.1 3DMark Time Spy - dataALL.ltx"}

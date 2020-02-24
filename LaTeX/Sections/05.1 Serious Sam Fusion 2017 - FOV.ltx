@@ -1,0 +1,18 @@
+\subsection{Serious Sam Fusion 2017 - FOV Table (90 is default)}
+
+\noindent	\setlength{\tabcolsep}{2pt} {
+	\begin{tabularx}{\textwidth}{c | l | l | l | l | l | l}
+		Ratio	&	1280x720	&	1280x960	&	1280x1024	&	1600x900	&	1680x1050	&	1920x1080	\\	\hline
+		\endhead
+		5:4		&	70.2		&	86.3		&	\textbf{90}	&	70.2		&	76			&	70.2		\\	\hline
+		4:3		&	73.8		&	\textbf{90}	&	93.6		&	73.8		&	79.8		&	73.8		\\	\hline
+		16:10	&	84			&	100.2		&	104			&	84			&	\textbf{90}	&	84			\\	\hline
+		16:9	&	\textbf{90}	&	106.2		&	109.8		&	\textbf{90}	&	96			&	\textbf{90}	\\	\hline
+		21:9	&	105.6		&	120			&	120			&	105.6		&	111			&	105.6		\\	\hline
+	\end{tabularx}
+}	\vspace{1.0ex}
+
+FOV Conversion:
+\[
+2*\arctan\left(\frac{Width_{output}}{Width_{input}}*\tan\left(\frac{FOV_{16:9}}{2}*\frac{\pi}{180}\right)\right)*\frac{180}{\pi}
+\]

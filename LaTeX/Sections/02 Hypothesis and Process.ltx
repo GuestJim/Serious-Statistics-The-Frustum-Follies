@@ -1,0 +1,62 @@
+\section{Hypothesis and Process}
+
+I am approaching this article a little differently than some others I have written.
+For one thing I have decided to regardless of the results, I will share them.
+While I may have described the question as being a bit silly, and even the title shows this, I also consider it a reasonable question to ask.
+If that is the case, then there are likely other people who have asked the same or a similar question, so it is only appropriate to share the answer.
+
+Another way this differs from my other articles is I am approaching this work with a hypothesis to test, like a scientific experiment, though I am not going to be as rigorous as such an experiment would usually demand.
+My hypothesis is this: \textbf{Performance is a function of both sampling frequency/resolution and aspect ratio}.
+The counterhypothesis is this: \textbf{Performance is a function of sampling frequency/resolution}.
+Both of these are significant simplifications as there are many factors that contribute to the performance, but the sampling frequency (resolution) and aspect ratio are the two I am going to manipulate here.
+Unfortunately this simplification also means these two do not cover all scenarios but I feel keeping a simplified approach is best for this.
+
+Immediately I will acknowledge a couple issues with these two statements for testing, with one being they are so oversimplified that there can be scenarios that are not covered by either.
+However, I feel keeping a simplified approach is going to be best for this work.
+The other issue is I suspect no one doubts that aspect ratio influences performance, making the question more about how significant the influence is.
+Is it a small amount to the point it can be neglected, like in the counterhypothesis, or should one consider it when looking into performance numbers?
+
+Before getting too far from it, I want to explain why I am using the term 'sampling frequency' instead and I think this graphic will help with that:
+
+%AREA_COMPARISONS
+\image{{Area Comparisons}}
+
+These rectangles are divided into so many identical squares, with the number of squares determined by the aspect ratio.
+(The blue 4:3 and cyan 5:4 rectangles are slightly different as I added sub-grids, to make the scaling between them and the others look more similar.The sampling frequency would be the number of samples along the horizontal and vertical dimension for each square, which means multiplying the frequency by the appropriate number of squares gets you the width or height of the rectangle; the resolution.
+This serves the purpose of providing a helpful visual for aspect ratio, as shown above, and makes some of the work easier to create resolutions for arbitrary aspect ratios but (approximately) equal areas/pixel counts.
+Indeed I have scripted this for creating the necessary files for 3DMark.
+The squares comprising each rectangle are different to those in other rectangles as I have it all scaled such that the areas are approximately equal.
+
+This graphic, unfortunately, is not as helpful for visualizing different fields of view, so I made another meant to show both how the frustum changes but also how sampling rate works with it.
+
+%FOV_COMPARISONS
+\image{{FOV Comparisons}}
+
+Starting with what a frustum is, it is the volume you get when you take two similar rectangles on parallel planes and connect their vertices.
+This shape resembles a pyramid with its top cut off parallel to its base.
+In a video game, the smaller rectangle is the front of the camera space and the larger is the back of the camera space, and only those objects within this space will be rendered.
+This is a simplification as some visual effects can cause the objects outside this space to rendered, and the game is always aware of objects outside of this space as well.
+You can find additional graphics and explanation for the frustum on the third page of the Serious Statistics: The Aliasing Adventure article, the section concerned with \href{https://www.overclockersclub.com/reviews/serious_statistics_aliasing/3.htm}{Rasterization}.
+In this graphic, however, I have made some additions and done some warping.
+In the bottom half you can see frustums for 4:3, 16:9, and 21:9 and then from the larger rectangle I have lines connecting to a standard 16:9 rectangle.
+This rectangle is to represent the final frame you would see on a 16:9 display if all you did was change the FOV.
+I also marked what the angles would be for those aspect ratios, with 16:9 at 90° and further showed how a cross section of the frustum is stretched to this final frame.
+If you look closely you will also see the grid on every rectangle is 16:9 as I stretched these as well, and then changed the color to identify the effective aspect ratio.
+
+Something important to know about the frustum is that it is the CPU that determines where it is and what is inside of it.
+When an object is within that space, a draw call is created and sent to the GPU for the actual rendering.
+This is important because draw calls do very much impact overall performance as they are somewhat intensive.
+Low-level graphics APIs like DirectX 12 and Vulkan have both been developed to better utilize CPU threads, making draw calls more efficient and thus opening up greater performance, but there is another technology that also demonstrates this; tessellation.
+Part of a draw call is the vertices of the object, so objects with fewer vertices are easier for the CPU to work on than objects with more vertices.
+With the GPU-side tessellation present in DirectX 11, the CPU is able to work with a simpler version of an object and send that off to the GPU.
+The GPU then adds vertices to the object, making it more complex but does so very quickly and without delaying other tasks, or at least not as much as the CPU working longer on a draw call.
+
+If my hypothesis is accurate and the aspect ratio does influence performance, it is possible this performance impact will be due to the change in work the CPU needs to do, as draw calls will increase or decrease based on the shape of the frustum.
+Of course the work the GPU needs to do will also be impacted, and in turn the performance, but I want to make the point the CPU will play a factor here, and possibly be the more significant factor.
+The impact of the GPU may be based on the number and kinds of visual effects used on the newly visible or newly removed objects.
+
+My process for testing the hypothesis will be to record the performance at various aspect ratios and sampling frequencies or resolutions.
+Comparing the results will allow us to see if there are any differences between aspect ratios that are not the result of per-pixel count changes.
+In the case of \textit{Shadow of the Tomb Raider} I also have data for both DirectX 11 and DirectX 12, so we can see differences there as well.
+The 3DMark test I am using Time Spy, is DX12 only and while \textit{Serious Sam Fusion 2017} does offer multiple graphics APIs I decided to only use DirectX 11, as the data in \href{http://www.overclockersclub.com/reviews/serious_statistics_and_scripts}{Serious Statistics Reprocessed: Statistics and Scripts} showed it performed the best and was the most stable.
+I did not collect the data for this article in the same way, but I will explain that when I get to the appropriate section.

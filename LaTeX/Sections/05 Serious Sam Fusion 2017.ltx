@@ -1,0 +1,171 @@
+\section{Serious Sam Fusion 2017}
+
+It is kind of funny how useful \textit{Serious Sam Fusion 2017} has proven to be for me, thanks to its wealth of settings and features, with two proving specifically useful for this article.
+One is the ability to alter the field of view and the other is a built-in benchmark tool.
+This is the first time I have used the benchmark to collect data, but I felt it would be better than doing manual runs because of the number of runs that are involved.
+I am not relying on the frame rate it reports though, instead running OCAT for the usual five minutes once the gameplay of the benchmark starts.
+(It first goes through the equipment you have, like when you start the level to play, so I waited until after that.Another reason I collected data this way is one of the two relevant quirks to this benchmark; the longest duration options are one minute and unlimited.
+The only way to get more than one minute is to just let it go and manually stop it, which is what I did using the beeps from OCAT to know when to stop.
+The other quirk to the benchmark deserves its own paragraph.
+
+The usual purpose to a benchmark is to provide a regular, reproducible test to determine your hardware's performance, for the current software configuration.
+\textit{Serious Sam Fusion 2017} does not quite work like that.
+Its benchmark appears to work by giving an AI to the playable character, and this then runs the map for as long as needed.
+On the bright side, this may make it more representative of real gameplay, but it also means there is no guarantee two runs will be the same.
+Indeed I observed the AI take different paths at the beginning, so what I did is exactly what I did with the \textit{Shadow of the Tomb Raider} runs; I watched the results and repeated if something seemed too far off.
+In addition to the files with the complete recordings, OCAT also provides a summary file that includes the mean frame rate and frame time, so I watched this on my desktop and if a number was out of line, I removed the file and repeated.
+For anyone curious, the different starting path of the AI did not seem to directly lead to a different result.
+I could not tell you about any other path differences as I was not watching that closely, but I did specifically notice the means being similar even when the AI went one way instead of another.
+
+Once I had my process figured out for collecting this data, I also needed to decide how I wanted to work with it, because I ended up with 150 files totaling 1.92 GB, which is a bit much.
+My solution was to return to the summary file, sort of.
+The precision in that summary is not enough so I wrote the scripts to get more precise means from the complete data and this is what I used, and basically never referred to the original data then.
+I have it but it would be a significant mess to try to work with that many files.
+(I did look at it later to check something with error values, as we will see later.)
+
+The other feature of \textit{Serious Sam Fusion 2017} I mentioned I am taking advantage is the ability to alter the FOV, the angle used to alter the dimensions of the frustum.
+If you continue the shape of the frustum to form a pyramid, the horizontal and vertical FOV measurements are the angles at its vertex.
+It appears \textit{Serious Sam fusion 2017} only allows you to alter the horizontal FOV, which actually helps me.
+I admit, I do not mess with FOV settings basically ever, but I do believe some games allow you to alter both the horizontal and vertical FOV, or provide one option that alters both.
+Regardless, it being only the horizontal helps me because it means the required math is easier.
+
+It turns out that trigonometry actually is useful outside of classrooms (it always has been), with this article being an example.
+Thanks to the vertical FOV being constant across the ratios, I was able to use the tangent and inverse/arctangent functions to determine the FOV values for 4:3, 5:4, 16:10, 16:9, and 21:9 for each ratio.
+With 3DMark I needed to alter the resolution to recreate each aspect ratio at approximately the same number of pixels, but here I can keep the output resolution and thus the pixel counts fixed and still recreate the other aspect ratios.
+It is not perfect though, because of limitations of the FOV setting in the game.
+For one thing, it has upper and lower limits which knocked out any tests with an effective 9:16 ratio.
+Also for 4:3 and 5:4, the upper limit of 120° cut off reaching 21:9 perfectly.
+It is not so bad for 4:3 as the angle there would be 120.51°, but for 5:4 the angle that corresponds to 21:9 is 123.64°.
+I just used 120° for that, as is marked in the tables I have, but it does mean those values are not as close as I would like.
+Additionally, there is a step between FOV values, so I could not use the exact angle trigonometry told me to, but the closest I could get.
+(It was generally pretty close, so that 0.51° difference for 4:3 is actually large.It is these in-game values recorded in the tables and not the true angles from the math.
+
+Here is the graphic I made and shared earlier of how the FOV changes work, more or less:
+
+%FOV_COMPARISONS
+\graphicspath{{Media/}}
+\image{{FOV Comparisons}}
+\graphicspath{{Media/Serious Sam/}}
+
+The rectangles are colored to match the aspect ratios, but ultimately the frustum is mapped to 16:9, in this example.
+You can see how the frame from the frustum is mapped to the 16:9 output, both with the top of the graphic but also because I am using a 16:9 grid in each rectangle, regardless of the aspect ratio, so the grids are not comprised of squares.
+
+Here is the screenshot composite I made from the different resolutions, and you should immediately notice it is significantly different from the others I have done.
+
+%COMPOSITE
+\image{{Composite}}
+
+%COMPOSITE_COLORED
+\image{{Composite - Colored}}
+
+%FRUSTUM_COMPARISONS
+\image{{Serious Sam Frustum Comparisons}}
+
+Unlike both 3DMark and \textit{Shadow of the Tomb Raider}, \textit{Serious Sam Fusion 2017} works by cropping in from a 16:9 frame to arrive at the aspect ratio of the selected resolution.
+Unfortunately as I do not have an ultra-wide display, I do not know how the engine handles 21:9.
+If the engine only crops, then it would remove the top and bottom of the frame to arrive at that ratio, but it might also be that it uses a fixed vertical FOV, which means it has to crop in from 16:9 to arrive at the 'smaller' frames.
+A fixed vertical FOV would require expanding the horizontal FOV to reach 21:9, and this is exactly what I did with my FOV manipulations.
+(To put it another way, my altering of the FOV would be undoing the engine's work if it uses a fixed FOV.)
+
+Here is a table to show the FOVs I used for each resolution to get each aspect ratio.
+
+\input{"Sections - Article/05.1 Serious Sam Fusion 2017 - FOV.ltx"}
+
+This information is also in the table of all the data that will be at the end of this section, as well as a column identifying the difference in area between the frustums.
+It assumes 16:9 corresponds to 1 and the fact the vertical FOV is the same made that math fairly easy.
+
+With that, my process for collecting the data has been covered, so we can actually get to the results now.
+
+%FPS_by_RATIO
+\image{{SSFF - Serious Sam - FPS by Ratio}}
+
+I considered using an actual frame time graph here, but the scales will not work well with the columns, so I opted to go for a frame rate graph instead.
+As you can see, the results are grouped by resolution and colored by ratio, so we can see there are some differences between the ratios, but not much.
+One thing we are not seeing, however, is the performance consistently improving with the smaller areas at all resolutions.
+You may also notice there are no error bars here, nor will there be for these graphs.
+Unfortunately it would require reading in the complete 1.92 GB of data to get accurate standard error measurements for this data, and I do not feel like doing that without good reason.
+There is a reason I will cover later on, and the standard error was so small the lines to show the error bars might outsize the error itself.
+
+This next graph does use frame time but also points instead of columns, which works quite a bit better for the Y-scale.
+I also have regression lines for each resolution type, to give an idea of the trend across the effective aspect ratios.
+
+%MS_by_AREA
+\image{{SSFF - Serious Sam - ms by Area}}
+
+This is a bit more interesting as we can again see the performance does not consistently improve as the area of the frame decreases.
+It is partly the case at the lower resolutions, but for 1920x1080 the best performance is actually at 16:9 and 21:9, which had the same mean value, and 1680x1050 also has some odd behavior.
+Its best performance is experienced at 16:10, that resolution's native aspect ratio, with all others doing a little worse.
+
+This is a bit more interesting as we can again see the performance does not consistently improve as the area of the frame decreases.
+It is partly the case at the lower resolutions, but for 1920x1080 the best performance is actually at 16:9 and 21:9, which had the same mean value, and 1680x1050 also has some odd behavior.
+Its best performance is experienced at 16:10, that resolution's native aspect ratio, with all others doing a little worse.
+
+Coming to 1600x900, the line actually looks very flat.
+We can see the 5:4 results are a little better at this resolution, and indeed 5:4 is the best performer for the other lower resolutions as well, and 5:4 is the smallest area of them.
+What is more interesting to notice is that 1280x1024 beats 1280x960 at 21:9, though the difference would be by a single frame per second.
+Both of these use 120° FOV at 21:9, but with 1280x960 being 4:3 and 1280x1024 being 5:4, the 1280x960 frame will actually be a little larger.
+This then makes sense of 1280x1024 outperforming the smaller resolution, provided it is the content of the frame and not the size of the frame that determines performance in this case, or at least is a more significant factor.
+At the lower aspect ratios, where the content of the frame should be the same between 1280x960 and 1280x1024 because the FOVs are the correct values, 1280x1024 does perform worse, which would follow from there being more GPU work to do.
+
+This is the case where I decided to look at what the actual standard error would be for these results.
+When I found the means from the data, instead of using the mean of the means of five runs, I got 3.028867 ms for 1280x1024 and 3.038388 ms for 1280x960, which continues to show 1280x1024 performing better at 21:9.
+(I did not look at any other aspect ratios.The corresponding FPS difference is a whole 1 FPS, going from 330.157 FPS to 329.122 FPS, and the standard error measurements are 0.000545 ms and 0.000607 ms for 1280x1024 and 1280x960, respectively, or 0.0570 FPS and 0.0634 FPS in that same order.
+Clearly we can be rather confident in these results, even if the difference is so small.
+
+Something unexpected here is that we see the 4:3 performance so often being a little worse than the larger 16:10 frame.
+It is not always the case but does happen for both low and high resolutions here, suggesting there is another factor influencing performance.
+
+%MS_by_AREA_Zoom
+\image{{SSFF - Serious Sam - ms by Area Zoom}}
+
+By using the facets to zoom in on the results, we get to see a little better how the trend lines undulated.
+There is one pattern I notice here that was harder to see before, and that is a similar behavior to the lines for the three 16:9 plots: 1920x1080; 1600x900; and 1280x720.
+All three have a single inflection point between the 16:10 and 16:9 results.
+For anyone who has not taken calculus or took it long enough ago to forgot (though I remembered this one, memory is a reason I kept every math textbook I had in college), an inflection point in math is the point the concavity of a curve changes direction.
+In this case, the left side of the curve has its vertex upward, like an upside-down bowl, but on the right side it is downward.
+This makes me think there is something systemic causing this, related to the FOV angles since those were identical across those resolutions; they were based on the aspect ratio.
+Additional testing at more resolutions or FOV configurations could prove interesting, but would be outside the purpose of this article.
+(And without a better way to automate this process, I do not think I would want to do it.)
+
+%MS_by_PIXELS
+\image{{SSFF - Serious Sam - ms by Pixels}}
+
+Now we are looking at performance plotted against the number of pixels in the final output, and there are some interesting things to notice here.
+At both ends, 1280x720 and 1920x1080, we see the lines and points diverge, especially compared to the more central data.
+There is more spread at the lower end than at the higher end, but there is something curious with the order of the lines.
+At 1280x720 we see the 21:9 line clearly above the rest, indicating inferior performance, but at the other end, 1920x1080 the line is below the rest, except for 16:9 which it overlaps.
+We also see the 5:4 line going from the best performing to the second worst, so things kind of flipped between these two resolutions.
+
+The pattern I think is most interesting, however, is how the lines all bundle together around 1600x900.
+We already saw the 1600x900 performance was very consistent across the effective aspect ratios in the previous graphs, but seeing it again is still interesting and perhaps means there is some kind of optimal performance balance at that resolution.
+
+In case anyone is wondering, this graph is not using a logarithmic scale for the Y-axis, and applying such a transformation would not impact it at all.
+I have checked, but the range of values for this Y-axis is so small, a logarithmic transformation appears linear.
+This is also true of the next graph, but I did leave the logarithmic scale in place as I feel it is more appropriate than a linear scale, even if it has no impact.
+
+%MS_by_PIXELS
+\image{{SSFF - Serious Sam - ms per Pixel by Pixels}}
+
+As I have done in the previous sections, this graph is my attempt to normalize the results by dividing by the number of pixels.
+It does appear pretty linear, but we also still see the separation between the lines like on the previous graph.
+This was very much not the case for \textit{Shadow of the Tomb Raider}, as its data almost perfectly fell on a single straight line.
+
+%MS_PER_PIXEL_BY_RATIO
+\image{{SSFF - Serious Sam - ms per Pixel by Ratio}}
+
+Now we are back to a similar graph with the area on the X-axis and the data grouped by the resolution.
+Unfortunately, I do not think this adds anything compared to when we saw it without the normalization, except now the 1280x960 and 1280x1024 lines to not cross each other, thanks to the significant difference in total pixels.
+The zoomed in version of the graph will appear identical to the earlier zoomed in graph, which is why I am skipping it.
+The scales would change but otherwise provide nothing new.
+It is a little interesting to see the 1280x960 and 1280x1024 lines so separated though, since they were overlapping each other earlier, which just shows how there is a difference in the number of pixels despite the performance being so similar.
+
+Going through these results has definitely been interesting.
+There were some results supportive of my hypothesis, such as 5:4, with the smallest frame size, performing better than the other aspect ratios for the lower resolutions, but others that do not, like 16:9 performing the best for 1920x1080, the greatest tested resolution.
+The fact 1680x1050 performed the best at 16:10 is also interesting and may suggest there is a preference for unaltered FOV, but then both 1920x1080 and 1680x1050 seemed unaffected when going from 16:9 to 21:9, which is a significant increase in frame size.
+
+It might be the 1600x900 results that are the most interesting though, as that resolution was the most consistent across the effective aspect ratios.
+We do see different patterns on either side of that resolution too, like what I just mentioned about 16:9 and 21:9 for the higher resolutions, and 5:4 performing better for the lower resolutions.
+I think I can say these results do support my hypothesis, but like the 3DMark results show the impact of frustum shape can be hidden as the resolution increases.
+
+\clearpage
+\input{"Sections - Article/05.1 Serious Sam Fusion 2017 - dataALL.ltx"}

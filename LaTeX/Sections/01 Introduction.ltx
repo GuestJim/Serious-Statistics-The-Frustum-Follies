@@ -1,0 +1,45 @@
+\section{Introduction}
+
+Having a significant amount of free time can be both a blessing and a curse.
+It is a blessing as it means I have the time to do various things, but it can also be a curse as it lets me work on even the silly ideas, like the one behind this article.
+On the bright side, it being a silly idea makes \textit{Serious Statistics: The Frustum Follies} all the more appropriate a title.
+
+I will share a better explanation to the idea for this article in a later section, but here is a short version: How much an impact, if any, does the aspect ratio have on performance?
+Beyond any doubt, 16:9 is the most common aspect ratio, and the differences between a 1920x1080 and 2560x1440 display or image can be thought of in terms of sampling frequency (120 for 1920x1080 and 160 for 2560x1440), but between widescreen 16:9 and ultrawide 21:9 or standard 4:3, the differences are not so linear.
+You can simplify the additional work of a higher sampling frequency as 'more pixels' but when the shape of the camera itself and the scene it captures changes, there may be more involved to determining the performance.
+
+I do not exactly remember when I had the idea to explore this question, but I do know some of what I learned concerning rendering while researching \href{http://www.overclockersclub.com/reviews/serious_statistics_aliasing/}{Serious Statistics: The Aliasing Adventure} is fueling my curiosity.
+A portion of that article focused on sampling frequency, which determines image detail and unquestionably impacts performance, but was unconcerned with the frustum, the shape that determines what is and is not seen by the camera, so the contents of the image.
+How significant an impact will the inclusion and exclusion of this content have on the performance, or might the impact be insignificant?
+
+Being a Serious Statistics article, \textit{Serious Sam Fusion 2017} will be used, but I will first cover the results I got from 3DMark.
+With the Professional Edition of this popular benchmark suite you can create custom benchmark configuration files and run tests via command line.
+I haven taken advantage of these features with scripts to create the configuration files, run through loops of them, and then even pull the frame rate results out of the exported files.
+Though it might only be very few of you reading this that could also utilize these scripts, I will still share them in the \href{https://github.com/GuestJim/Serious-Statistics-The-Frustum-Follies}{GitHub repository} I have made for this article, so you can review my process if you wish.
+
+\textit{Serious Sam Fusion 2017} is not the only game I will use for this testing, as I still have \textit{Shadow of the Tomb Raider} installed and it does offer some interesting advantages for such testing.
+One advantage is its support for both DirectX 11 and DirectX 12, which demonstrate significantly different performance.
+Another is its built-in benchmark will actually report not only the mean frame rate but also the theoretical GPU performance, CPU Game, and CPU Render performance.
+(For this article, it will be the frame rate and the CPU Render data I am interested in, but I did record all four values.)
+
+There is something that makes \textit{Serious Sam Fusion 2017} a desirable game to test with here.
+Among its (almost excessive) wealth of settings is Field of View, which is a setting in some games that does specifically alter the shape of the frustum.
+It does this without altering the sampling frequency, so I used the setting to simulate other aspect ratios without altering the current resolution.
+This is an equivalent result to what I achieve in 3DMark with custom resolutions, but for both software it is impossible to perfectly do this.
+3DMark resolutions must have dimensions that are a multiple of 2 and not every angle is available for \textit{Serious Sam Fusion 2017}'s FOV, but I think the results were still close enough to be informative.
+
+Before moving on, here are the specifications of my test system:
+
+\begin{itemize}
+	\item	Processor: AMD Ryzen 7 2700X with PBO Enabled and -0.0625 V Offset
+	\item	Cooling: AMD Wraith Prism (Box Cooler)
+	\item	Motherboard: MSI B450 Mortar
+	\item	Memory: Corsair 2x8 GB (16 GB) @ 3000 MHz 16-17-17-35
+	\item	PSU: Seasonic FOCUS Plus 650 Gold
+	\item	OS: Windows 10 Home 64-bit 1909
+	\item	GPU: \href{http://www.overclockersclub.com/reviews/nvidia_geforce_rtx2060_founders_edition/}{NVIDIA RTX 2060} (GeForce Game Ready Driver 441.20)
+\end{itemize}
+
+In case anyone is wondering, I do not intend to use NVIDIA's Dynamic Super Resolution (DSR) feature.
+While it can allow greater resolutions than the connected display natively offers, it remains locked to my display's 16:9 aspect ratio, making it less useful for this article.
+AMD's Virtual Super Resolution (VSR) is similarly unhelpful for me here if I were to try with an AMD GPU.
